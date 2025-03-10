@@ -8,10 +8,10 @@ namespace Common_Utilities.ConfigObjects
 
         public string Group { get; set; } = "none";
 
-        public void Deconstruct(out ItemType type, out ushort limit, out string group)
+        public void Deconstruct(out ItemType ammoType, out ushort amount, out string group)
         {
-            type = Type;
-            limit = Amount;
+            ammoType = Type;
+            amount = Amount;
             group = Group;
         }
     }

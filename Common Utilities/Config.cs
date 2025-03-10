@@ -14,32 +14,41 @@ namespace Common_Utilities
 
     public class Config : IConfig
     {
+        [Description("If the plugin is enabled or not.")]
+        public bool IsEnabled { get; set; } = true;
+        
         [Description("Whether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
-        public bool DisarmSwitchTeams { get; set; } = true;
-
-        [Description("Whether or not disarmed people will be prevented from interacting with doors/elevators.")]
-        public bool RestrictiveDisarming { get; set; } = true;
+        [Description("Roles that when cuffed in the escape area will change into the target one.")]
+        public Dictionary<RoleTypeId, RoleTypeId> DisarmedEscapeSwitchRole { get; set; } =
+            new()
+            {
+                {
+                    RoleTypeId.NtfCaptain, RoleTypeId.ChaosMarauder
+                },
+                {
+                    RoleTypeId.ChaosMarauder, RoleTypeId.NtfCaptain
+                },
+            };
         
         [Description("The text displayed at the timed interval specified below.")]
-        public string TimedBroadcast { get; set; } = "<color=#bfff00>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
+        public string TimedBroadcast { get; set; } = "<color=#bfff00>This server is running </color><color=red>EXILED Common-Utilities</color><color=#bfff00>, enjoy your stay!</color>";
 
         [Description("The time each timed broadcast will be displayed.")]
         public ushort TimedBroadcastDuration { get; set; } = 5;
 
         [Description("The delay between each timed broadcast. To disable timed broadcasts, set this to 0")]
-        public float TimedBroadcastDelay { get; set; } = 300f;
+        public float TimedBroadcastDelay { get; set; } = 0;
 
         [Description("The message displayed to the player when they first join the server. Setting this to empty will disable these broadcasts.")]
-        public string JoinMessage { get; set; } = "<color=lime>Welcome %player%! Please read our rules!</color>";
+        public string JoinMessage { get; set; } = string.Empty;
 
         [Description("The amount of time (in seconds) the join message is displayed.")]
         public ushort JoinMessageDuration { get; set; } = 5;
 
-        [Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.")]
-        public float AutonukeTime { get; set; } = 1500f;
+        [Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start. Set to -1 to disable.")]
+        public float AutonukeTime { get; set; } = -1;
 
         [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
@@ -54,7 +63,7 @@ namespace Common_Utilities
         };
 
         [Description("Whether or not to show player's health under their name when you look at them.")]
-        public bool PlayerHealthInfo { get; set; } = true;
+        public bool PlayerHealthInfo { get; set; } = false;
 
         [Description("Whether or not friendly fire should automatically turn on when a round ends (it will turn itself back off before the next round starts).")]
         public bool FriendlyFireOnRoundEnd { get; set; } = false;
@@ -62,11 +71,14 @@ namespace Common_Utilities
         [Description("The multiplier applied to radio battery usage. Set to 0 to disable radio battery drain.")]
         public float RadioBatteryDrainMultiplier { get; set; } = 1f;
 
-        [Description("The color to use for lights while the warhead is active.")]
-        public Color WarheadColor { get; set; } = new(1f, 0.2f, 0.2f);
+        [Description("Whether to change the color of lights while warhead is active.")] 
+        public bool ChangeWarheadColor { get; set; } = false;
+        
+        [Description("The color to use for lights while the warhead is active. In the RGBA format using values between 0 and 1. Ignored if ChangeWarheadColor is set to false.")]
+        public Color WarheadColor { get; set; } = new(1f, 0.2f, 0.2f, 1);
 
         [Description("The maximum time, in seconds, that a player can be AFK before being kicked. Set to -1 to disable AFK system.")]
-        public int AfkLimit { get; set; } = 120;
+        public int AfkLimit { get; set; } = -1;
         
         [Description("The roles that are ignored by the AFK system.")]
         public List<RoleTypeId> AfkIgnoredRoles { get; set; } = new()
@@ -74,6 +86,8 @@ namespace Common_Utilities
             RoleTypeId.Scp079,
             RoleTypeId.Spectator,
             RoleTypeId.Tutorial,
+            RoleTypeId.Filmmaker,
+            RoleTypeId.Overwatch,
         };
 
         [Description("Whether or not probabilities should be additive (50 + 50 = 100) or not (50 + 50 = 2 seperate 50% chances)")]
@@ -123,43 +137,40 @@ namespace Common_Utilities
             },
         };
 
-        [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
-        public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChanges { get; set; } = new()
+        [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item. For custom items use the item's name.")]
+        // This should be named Scp914ItemChanGes instead of ChanCes (capitalized to show the difference), consider changing at some point (breaking change)
+        public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChances { get; set; } = new()
         {
             {
                 Scp914KnobSetting.Rough, new List<ItemUpgradeChance>
                 {
+                    new()
                     {
-                        new()
-                        {
-                            Original = ItemType.KeycardO5,
-                            New = ItemType.MicroHID,
-                            Chance = 50,
-                        }
+                        Original = ItemType.KeycardO5.ToString(),
+                        New = ItemType.MicroHID.ToString(),
+                        Chance = 50,
                     },
                 }
             },
         };
         
-        [Description("The list of custom 914 recipies for roles. Original is the role to be changed, New is the new role to assign, Chance is the % chance of the upgrade occuring.")]
+        [Description("The list of custom 914 recipies for roles. Original is the role to be changed, New is the new role to assign, Chance is the % chance of the upgrade occuring. For custom roles use the role's name.")]
         public Dictionary<Scp914KnobSetting, List<PlayerUpgradeChance>> Scp914ClassChanges { get; set; } = new()
         {
             {
                 Scp914KnobSetting.Rough, new List<PlayerUpgradeChance>
                 {
+                    new()
                     {
-                        new()
-                        {
-                            Original = RoleTypeId.ClassD,
-                            New = RoleTypeId.Spectator.ToString(),
-                            Chance = 100,
-                        }
+                        Original = RoleTypeId.ClassD.ToString(),
+                        New = RoleTypeId.Spectator.ToString(),
+                        Chance = 100,
                     },
                 }
             },
         };
 
-        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone that isn't in the ignoredRooms list, instead of the room type defined.")]
+        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone that isn't in the ignoredRooms list, instead of the provided room type.")]
         public Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>> Scp914TeleportChances { get; set; } = new()
         {
             {
@@ -168,7 +179,8 @@ namespace Common_Utilities
                     new()
                     {
                         Room = RoomType.LczClassDSpawn,
-                        Chance = 100,
+                        Offset = Vector3.up,
+                        Chance = 50,
                     },
                     new()
                     {
@@ -177,6 +189,7 @@ namespace Common_Utilities
                         {
                             RoomType.Lcz173,
                         },
+                        Chance = 100,
                     },
                 }
             },
@@ -215,8 +228,16 @@ namespace Common_Utilities
         [Description("If item cleanup should only happen in the Pocket Dimension or not.")]
         public bool ItemCleanupOnlyPocket { get; set; } = false;
         
-        [Description("A list of all roles and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
-        public Dictionary<RoleTypeId, float> RoleDamageMultipliers { get; set; } = new()
+        [Description("A list of all roles and their damage dealt modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
+        public Dictionary<RoleTypeId, float> RoleDamageDealtMultipliers { get; set; } = new()
+        {
+            {
+                RoleTypeId.Scp173, 1.0f
+            },
+        };
+
+        [Description("List of roles and their damage received multipliers. 1 = normal damage, 1.5 = 50% more damage, 0.5 = 50% less damage.")]
+        public Dictionary<RoleTypeId, float> RoleDamageReceivedMultipliers { get; set; } = new()
         {
             {
                 RoleTypeId.Scp173, 1.0f
@@ -237,9 +258,6 @@ namespace Common_Utilities
             {
                 RoleTypeId.Scp173, 0
             },
-            {
-                RoleTypeId.Scp939, 10
-            },
         };
         
         [Description("A list of roles and what their default starting health should be.")]
@@ -248,12 +266,6 @@ namespace Common_Utilities
             {
                 RoleTypeId.Scp173, 3200
             },
-            {
-                RoleTypeId.NtfCaptain, 150
-            },
         };
-
-        [Description("If the plugin is enabled or not.")]
-        public bool IsEnabled { get; set; } = true;
     }
 }
