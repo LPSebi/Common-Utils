@@ -1,6 +1,3 @@
-using Exiled.API.Extensions;
-using Exiled.API.Features.Items;
-
 namespace Common_Utilities.EventHandlers
 {
     using System;
@@ -9,6 +6,7 @@ namespace Common_Utilities.EventHandlers
 
     using Common_Utilities.ConfigObjects;
     using Exiled.API.Enums;
+    using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.API.Features.Pickups;
     using Exiled.CustomRoles.API.Features;

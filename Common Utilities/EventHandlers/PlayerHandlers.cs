@@ -104,7 +104,7 @@ namespace Common_Utilities.EventHandlers
 
             for (int i = 0; i < plugin.Config.StartingInventories[role].UsedSlots; i++)
             {
-                IEnumerable<ItemChance> itemChances = plugin.Config.StartingInventories[role][i].Where(x => player == null || string.IsNullOrEmpty(x.Group) || x.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group));
+                IEnumerable<ItemChance> itemChances = plugin.Config.StartingInventories[role][i].Where(x => player == null || string.IsNullOrEmpty(x.Group) || x.Group == "none" || (player.Group != null && x.Group.Contains(player.GroupName)) || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group));
                 double r;
                 if (plugin.Config.AdditiveProbabilities)
                     r = plugin.Rng.NextDouble() * itemChances.Sum(val => val.Chance);
