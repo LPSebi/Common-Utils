@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-namespace Common_Utilities.ConfigObjects
-{
-    using System.Collections.Generic;
-
-    using Exiled.API.Enums;
-    using UnityEngine;
-=======
 namespace Common_Utilities.ConfigObjects;
 
 using System.Collections.Generic;
@@ -15,7 +7,6 @@ using UnityEngine;
 public class Scp914TeleportChance : IChanceObject
 {
     public ZoneType Zone { get; set; } = ZoneType.Unspecified;
->>>>>>> 5c9cf829970faac7db0ea545dc34b3d2c226c3a4
 
     public List<RoomType> IgnoredRooms { get; set; } = new();
 

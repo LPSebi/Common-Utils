@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-namespace Common_Utilities.EventHandlers
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Common_Utilities.ConfigObjects;
-    using Exiled.API.Enums;
-    using Exiled.API.Extensions;
-    using Exiled.API.Features;
-    using Exiled.API.Features.Pickups;
-    using Exiled.CustomRoles.API.Features;
-    using Exiled.Events.EventArgs.Scp914;
-    using MEC;
-    using PlayerRoles;
-    using UnityEngine;
-
-    public class MapHandlers
-    {
-        private readonly Main plugin;
-
-        public MapHandlers(Main plugin) => this.plugin = plugin;
-=======
 // ReSharper disable All
 namespace Common_Utilities.EventHandlers;
 
@@ -43,7 +19,6 @@ using UnityEngine;
 public class MapHandlers
 {
     private Config config => Plugin.Instance.Config;
->>>>>>> 5c9cf829970faac7db0ea545dc34b3d2c226c3a4
         
     public void OnUpgradingPickup(UpgradingPickupEventArgs ev)
     {
