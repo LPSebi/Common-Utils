@@ -171,6 +171,8 @@ public class PlayerHandlers
         {
             Log.Debug($"\n{nameof(GetStartingInventory)} Iterating slot {i + 1}");
             Log.Debug($"{nameof(GetStartingInventory)} Checking groups...");
+            
+            Log.Error("INFO DEBUG: playername: " + player.Nickname + ", playergroup: " + player.GroupName + ", playergroup: " + player.Group);
 
             // item chances for that slot
             List<ItemChance> itemChances = config.StartingInventories[role][i]
@@ -178,7 +180,7 @@ public class PlayerHandlers
                     player == null
                     || string.IsNullOrEmpty(x.Group)
                     || x.Group == "none"
-                    || (player.Group != null && x.Group.Contains(player.GroupName))
+                    || (player.Group != null && player.GroupName.Contains(x.Group))
                     || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) &&
                         group == player.Group))
                 .ToList();
